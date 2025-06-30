@@ -1,0 +1,5 @@
+# config/locales/fr.yml
+fr:
+  time:
+    formats:
+      short: "%d %b %Y, %H:%M"

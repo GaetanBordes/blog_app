@@ -3,11 +3,27 @@ class ArticlesController < ApplicationController
 
   # GET /articles or /articles.json
   def index
-    @articles = Article.all
+  if user_signed_in?
+    # Affiche les articles publics OU les articles privés de l'utilisateur connecté
+    @articles = Article.where(private: false).or(Article.where(user: current_user)).order(created_at: :desc)
+  else
+    # Affiche seulement les articles publics
+    @articles = Article.where(private: false).order(created_at: :desc)
   end
+end
+
 
   # GET /articles/1 or /articles/1.json
   def show
+    # Un article est visible si:
+  # - il n'est PAS privé
+  # - OU l'utilisateur est connecté ET il est le propriétaire de l'article
+  is_public = !@article.private?
+  is_owner = user_signed_in? && @article.user == current_user
+
+  unless is_public || is_owner
+    redirect_to root_path, alert: "Vous n'êtes pas autorisé à voir cet article."
+  end
   end
 
   # GET /articles/new
@@ -65,6 +81,6 @@ class ArticlesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def article_params
-      params.expect(article: [ :title, :content ])
+      params.require(:article).permit(:title, :content, :private)
     end
 end

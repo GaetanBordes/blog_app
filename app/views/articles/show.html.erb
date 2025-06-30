@@ -1,10 +1,52 @@
-<p style="color: green"><%= notice %></p>
+<%# ... (Partie qui affiche le titre et le contenu de l'article) ... %>
+<p>
+  <strong>Titre:</strong>
+  <%= @article.title %>
+</p>
 
-<%= render @article %>
+<p>
+  <strong>Contenu:</strong>
+  <%= @article.content %>
+</p>
 
-<div>
-  <%= link_to "Edit this article", edit_article_path(@article) %> |
-  <%= link_to "Back to articles", articles_path %>
+<p>
+  <em>Publié par <%= @article.user.email %></em>
+</p>
 
-  <%= button_to "Destroy this article", @article, method: :delete %>
+<%# ... (Partie avec les liens "Modifier" et "Supprimer" pour l'article) ... %>
+
+<hr>
+
+<%# SECTION COMMENTAIRES %>
+<h3>Commentaires</h3>
+
+<%# Formulaire pour ajouter un commentaire (visible seulement si connecté) %>
+<% if user_signed_in? %>
+  <%= form_with(model: [@article, @article.comments.build], class: "mb-4") do |form| %>
+    <div class="mb-3">
+      <%= form.text_area :body, rows: 3, class: "form-control", placeholder: "Laissez votre commentaire..." %>
+    </div>
+    <%= form.submit "Envoyer", class: "btn btn-primary" %>
+  <% end %>
+<% else %>
+  <p>Vous devez être <a href="<%= new_user_session_path %>">connecté</a> pour laisser un commentaire.</p>
+<% end %>
+
+<%# Liste des commentaires existants %>
+<div id="comments">
+  <% @article.comments.order(created_at: :desc).each do |comment| %>
+    <div class="card mb-2">
+      <div class="card-body">
+        <p class="card-text"><%= comment.body %></p>
+        <div class="d-flex justify-content-between align-items-center">
+          <small class="text-muted">Par <%= comment.user.email %> le <%= l comment.created_at, format: :short %></small>
+          
+          <%# Bouton de suppression visible seulement pour le propriétaire du commentaire %>
+          <% if user_signed_in? && comment.user == current_user %>
+            <%= button_to "Supprimer", [@article, comment], method: :delete, class: "btn btn-danger btn-sm", form: { data: { turbo_confirm: 'Êtes-vous sûr ?' } } %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>

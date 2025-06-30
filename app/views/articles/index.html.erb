@@ -1,6 +1,10 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h1>Articles</h1>
-  <%= link_to "Nouvel article", new_article_path, class: "btn btn-primary" %>
+  
+  <%# On n'affiche le bouton "Nouvel article" que si l'utilisateur est connecté %>
+  <% if user_signed_in? %>
+    <%= link_to "Nouvel article", new_article_path, class: "btn btn-primary" %>
+  <% end %>
 </div>
 
 <div class="mb-3">
@@ -10,8 +14,19 @@
 
 <div id="articles">
   <% @articles.each do |article| %>
-    <div class="card mb-3 article-card"> <div class="card-body">
-        <h5 class="card-title"><%= article.title %></h5>
+    <div class="card mb-3 article-card">
+      <div class="card-body">
+        
+        <%# C'est ici qu'on met le titre ET le badge %>
+        <h5 class="card-title">
+          <%= article.title %>
+          
+          <%# On affiche le badge si l'article est privé ET qu'on est son propriétaire %>
+          <% if article.private? && user_signed_in? && article.user == current_user %>
+            <span class="badge bg-secondary ms-2">Privé</span>
+          <% end %>
+        </h5>
+        
         <p class="card-text"><%= truncate(article.content, length: 150) %></p>
         <%= link_to "Voir l'article", article, class: "btn btn-secondary btn-sm" %>
       </div>
