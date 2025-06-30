@@ -1,0 +1,7 @@
+<%# ... (affichage du titre) ... %>
+<p>
+  <% if @photo.image.attached? %>
+    <%# On affiche une version redimensionnée pour ne pas casser la mise en page %>
+    <%= image_tag @photo.image.variant(resize_to_limit: [800, 800]) %>
+  <% end %>
+</p>

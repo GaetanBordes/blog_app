@@ -1,5 +1,6 @@
 # config/routes.rb
 Rails.application.routes.draw do
+  resources :photos
   devise_for :users
   root "articles#index"
   
