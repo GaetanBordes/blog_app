@@ -1,16 +1,20 @@
-<p style="color: green"><%= notice %></p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Articles</h1>
+  <%= link_to "Nouvel article", new_article_path, class: "btn btn-primary" %>
+</div>
 
-<% content_for :title, "Articles" %>
-
-<h1>Articles</h1>
+<div class="mb-3">
+  <button id="count-btn" class="btn btn-info">Compter les articles sur la page</button>
+  <p class="d-inline-block ms-3">Il y a <strong id="article-count">?</strong> article(s) affiché(s).</p>
+</div>
 
 <div id="articles">
   <% @articles.each do |article| %>
-    <%= render article %>
-    <p>
-      <%= link_to "Show this article", article %>
-    </p>
+    <div class="card mb-3 article-card"> <div class="card-body">
+        <h5 class="card-title"><%= article.title %></h5>
+        <p class="card-text"><%= truncate(article.content, length: 150) %></p>
+        <%= link_to "Voir l'article", article, class: "btn btn-secondary btn-sm" %>
+      </div>
+    </div>
   <% end %>
 </div>
-
-<%= link_to "New article", new_article_path %>
